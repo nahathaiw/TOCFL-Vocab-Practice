@@ -136,6 +136,8 @@ section.block{margin-top:24px}
 .seg button{border:0;background:var(--bg);padding:8px 16px;font-size:14px}
 .seg button.on{background:var(--accent);color:#fff}
 .hidden{display:none!important}
+.voicerow{display:flex;gap:8px;align-items:center}
+.voicerow select{flex:1;min-width:0;font:inherit;font-size:14px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
 .rangerow{display:flex;align-items:center;gap:14px;margin-top:14px}
 .rangerow input{flex:1;accent-color:var(--accent);height:28px}
 .rangerow b{min-width:34px;text-align:right;font-size:18px;color:var(--accent);font-variant-numeric:tabular-nums}
@@ -313,6 +315,11 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center}
       <div class="seg" id="segRoman"><button data-v="py">Pinyin</button><button data-v="zy">注音 ㄅㄆㄇ</button></div>
     </div>
     <div class="setrow">
+      <label class="t" data-t="sVoice"></label>
+      <div class="voicerow"><select id="voiceSel" aria-label="Voice"></select><button class="btn sm plain" id="voiceTest">▶ <span data-t="test"></span></button></div>
+      <p class="note" id="voiceNote"></p>
+    </div>
+    <div class="setrow">
       <label class="t" data-t="sTheme"></label>
       <div class="seg" id="segTheme"><button data-v="light">☀️ <span data-t="light"></span></button><button data-v="dark">🌙 <span data-t="dark"></span></button></div>
     </div>
@@ -384,7 +391,7 @@ const T = {
     mListen:'Listening',mListenD:'Hear the word, pick the character',mType:'Typing',mTypeD:'See the meaning, type the characters',askType:'Type this word in Chinese characters',typePh:'Type here…',check:'Check',hint:'Hint',giveUp:'Show answer',hintShown:'First character',typeTip:'Use your Chinese keyboard (Zhuyin or Pinyin input).',showPy:'Show pinyin',showZy:'Show Zhuyin',typedWas:'You typed',
     hProgress:'Your progress',mistakesLbl:'words in your mistakes list',reviewMistakes:'Quiz my mistakes',clear:'Clear',
     back:'Home',footer:'Word list: 華語文能力測驗詞表 (TOCFL 2.0, 2024-09-23). English meanings for all levels.',
-    sLang:'Interface language',helpT:'How to use',gotIt:'Got it',sTheme:'Appearance',light:'Day',dark:'Dark',sRoman:'Romanization',sRound:'Questions per quiz round',sReset:'Progress',resetBtn:'Reset all progress',resetDone:'Progress cleared.',
+    sLang:'Interface language',sVoice:'Voice (pronunciation)',test:'Test',vAuto:'Auto (best Taiwan voice)',vTW:'Taiwan',vCN:'Mainland',vHK:'Hong Kong',noTW:'No Taiwan Mandarin voice found on this device, so a Mainland voice is used. To add one — iPhone/iPad: Settings › Accessibility › Spoken Content › Voices › Chinese (Taiwan) › Meijia. Mac: System Settings › Accessibility › Spoken Content › System Voice › Manage Voices › Chinese (Taiwan). Windows: Settings › Time & Language › Speech › Add voices › Chinese (Traditional, Taiwan). Or use Chrome or Edge, which include a Taiwan voice.',hasTW:'Taiwan Mandarin voice in use: ',helpT:'How to use',gotIt:'Got it',sTheme:'Appearance',light:'Day',dark:'Dark',sRoman:'Romanization',sRound:'Questions per quiz round',sReset:'Progress',resetBtn:'Reset all progress',resetDone:'Progress cleared.',
     gNoun:'Nouns & measure words',gVerb:'Verbs',gOther:'Other',
     topicOff:'B1–C1 words have no topic in the official list. Topic filter applies to Pre-A1–A2 only.',
     topicMixed:'B1–C1 words have no topic, so choosing a topic only keeps Pre-A1–A2 words.',
@@ -404,7 +411,7 @@ const T = {
     mListen:'聽力',mListenD:'聽發音，選出詞彙',mType:'打字',mTypeD:'看意思，打出漢字',askType:'請打出這個詞的漢字',typePh:'在這裡輸入…',check:'檢查',hint:'提示',giveUp:'看答案',hintShown:'第一個字',typeTip:'請使用中文輸入法（注音或拼音）。',showPy:'顯示拼音',showZy:'顯示注音',typedWas:'你輸入的是',
     hProgress:'學習進度',mistakesLbl:'個詞在錯題本',reviewMistakes:'練習錯題',clear:'清除',
     back:'首頁',footer:'詞表：華語文能力測驗詞表（TOCFL 2.0，2024-09-23）。所有等級皆有英文解釋。',
-    sLang:'介面語言',helpT:'使用說明',gotIt:'知道了',sTheme:'外觀',light:'日間',dark:'夜間',sRoman:'拼音方式',sRound:'每回測驗題數',sReset:'進度',resetBtn:'重設所有進度',resetDone:'進度已清除。',
+    sLang:'介面語言',sVoice:'發音語音',test:'試聽',vAuto:'自動（優先台灣語音）',vTW:'台灣',vCN:'中國大陸',vHK:'香港',noTW:'此裝置沒有台灣華語語音，因此暫用中國大陸語音。新增方式——iPhone/iPad：設定 › 輔助使用 › 語音內容 › 聲音 › 中文（台灣）› 美佳。Mac：系統設定 › 輔助使用 › 語音內容 › 系統聲音 › 管理聲音 › 中文（台灣）。Windows：設定 › 時間與語言 › 語音 › 新增語音 › 中文（繁體，台灣）。或改用內建台灣語音的 Chrome、Edge。',hasTW:'目前使用台灣華語語音：',helpT:'使用說明',gotIt:'知道了',sTheme:'外觀',light:'日間',dark:'夜間',sRoman:'拼音方式',sRound:'每回測驗題數',sReset:'進度',resetBtn:'重設所有進度',resetDone:'進度已清除。',
     gNoun:'名詞與量詞',gVerb:'動詞',gOther:'其他',
     topicOff:'進階級以上的詞在官方詞表中沒有任務領域，此篩選只適用於準備級至基礎級。',
     topicMixed:'進階級以上的詞沒有任務領域，選擇領域時只會保留準備級至基礎級的詞。',
@@ -536,7 +543,7 @@ function renderStatic(){
   document.documentElement.lang = S.lang==='zh'?'zh-Hant':'en';
   document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
   document.title = t('title');
-  applyTheme();
+  applyTheme(); renderVoices();
   document.querySelectorAll('#segLang button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.lang));
   document.querySelectorAll('#segRoman button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.roman));
   document.querySelectorAll('#segRound button').forEach(b=>b.classList.toggle('on',+b.dataset.v===S.round));
@@ -608,6 +615,8 @@ $('#segLang').onclick=e=>{ const v=e.target.dataset.v; if(!v) return; S.lang=v; 
 $('#segRoman').onclick=e=>{ const v=e.target.dataset.v; if(!v) return; S.roman=v; saveS(); refreshAll(); };
 $('#helpBtn').onclick=openHelp; $('#closeHelp').onclick=closeHelp; $('#helpOk').onclick=closeHelp;
 $('#help').addEventListener('click',e=>{ if(e.target.id==='help') closeHelp(); });
+$('#voiceSel').onchange=e=>{ S.voice=e.target.value; saveS(); pickVoice(); };
+$('#voiceTest').onclick=()=>speak('你好，歡迎練習華語。',0.9);
 $('#themeBtn').onclick=()=>{ S.theme = curTheme()==='dark'?'light':'dark'; saveS(); applyTheme(); };
 $('#segTheme').onclick=e=>{ const b=e.target.closest('[data-v]'); if(!b) return; S.theme=b.dataset.v; saveS(); applyTheme(); };
 $('#roundRange').oninput=e=>{ S.round=+e.target.value; saveS(); renderStatic(); };
@@ -616,16 +625,32 @@ $('#resetBtn').onclick=()=>{ P={known:{},learning:{},mistakes:{}}; saveP(); $('#
 function refreshAll(){ renderStatic(); renderHome(); if(session) session.render(); }
 
 /* ---------- speech ---------- */
-let zhVoice=null;
+let zhVoice=null, zhVoices=[];
+const TW_NAME=/Meijia|美佳|臺灣|台灣|Taiwan|HanHan|Yating|Zhiwei|HsiaoChen|HsiaoYu|YunJhe|國語/i;
+const isTW = v => /zh[-_](TW|Hant)/i.test(v.lang) || (TW_NAME.test(v.name) && !/粤|粵|Cantonese|HK/i.test(v.name));
+function voiceScore(v){ let sc=0;
+  if(isTW(v)) sc+=100; else if(/zh[-_]HK/i.test(v.lang)) sc+=5; else sc+=10;
+  if(/Google|Natural|Neural|Premium|Enhanced|Online/i.test(v.name)) sc+=3;
+  if(v.localService) sc+=1; return sc; }
+function regionLabel(v){ return isTW(v)?t('vTW'):(/zh[-_]HK/i.test(v.lang)?t('vHK'):t('vCN')); }
 function pickVoice(){ if(!('speechSynthesis' in window)) return;
-  const vs=speechSynthesis.getVoices();
-  zhVoice = vs.find(v=>/zh[-_]TW/i.test(v.lang)) || vs.find(v=>/zh[-_](HK|Hant)/i.test(v.lang)) || vs.find(v=>/^zh/i.test(v.lang)) || null; }
-if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+  zhVoices = speechSynthesis.getVoices().filter(v=>/^(zh|cmn|yue)/i.test(v.lang) || TW_NAME.test(v.name))
+    .sort((a,b)=>voiceScore(b)-voiceScore(a));
+  zhVoice = (S.voice && zhVoices.find(v=>v.name===S.voice)) || zhVoices.find(v=>!/HK|yue/i.test(v.lang)) || zhVoices[0] || null;
+  renderVoices(); }
+function renderVoices(){ const sel=$('#voiceSel'); if(!sel) return;
+  if(!('speechSynthesis' in window)){ sel.innerHTML=''; sel.disabled=true; $('#voiceNote').textContent=t('noVoice'); return; }
+  sel.innerHTML = `<option value="">${t('vAuto')}</option>` + zhVoices.map(v=>`<option value="${esc(v.name)}">${esc(regionLabel(v))} · ${esc(v.name)}</option>`).join('');
+  sel.value = (S.voice && zhVoices.some(v=>v.name===S.voice)) ? S.voice : '';
+  const anyTW = zhVoices.some(isTW);
+  $('#voiceNote').textContent = !zhVoices.length ? t('noVoice') : (!anyTW ? t('noTW') : (zhVoice&&isTW(zhVoice) ? t('hasTW')+zhVoice.name : ''));
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,500); }
 function speakText(w){ return w.w.split('/')[0].replace(/[()]/g,''); }
 function speak(w,rate=0.85){
   if(!('speechSynthesis' in window)) return false;
   speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(speakText(w)); u.lang='zh-TW'; u.rate=rate; if(zhVoice) u.voice=zhVoice;
+  const u=new SpeechSynthesisUtterance(typeof w==='string'?w:speakText(w)); u.lang=(zhVoice&&zhVoice.lang)||'zh-TW'; u.rate=rate; if(zhVoice) u.voice=zhVoice;
   speechSynthesis.speak(u); return true;
 }
 
