@@ -136,6 +136,10 @@ section.block{margin-top:24px}
 .seg button{border:0;background:var(--bg);padding:8px 16px;font-size:14px}
 .seg button.on{background:var(--accent);color:#fff}
 .hidden{display:none!important}
+.rangerow{display:flex;align-items:center;gap:14px;margin-top:14px}
+.rangerow input{flex:1;accent-color:var(--accent);height:28px}
+.rangerow b{min-width:34px;text-align:right;font-size:18px;color:var(--accent);font-variant-numeric:tabular-nums}
+.rangeticks{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-right:48px}
 .helppanel{max-width:520px;max-height:calc(100vh - 80px);overflow-y:auto}
 .helppanel ol{margin:0;padding-left:20px}
 .helppanel li{margin:0 0 12px;font-size:15px;line-height:1.55}
@@ -315,6 +319,8 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center}
     <div class="setrow">
       <label class="t" data-t="sRound"></label>
       <div class="seg" id="segRound"><button data-v="10">10</button><button data-v="20">20</button><button data-v="30">30</button></div>
+      <div class="rangerow"><input type="range" id="roundRange" min="5" max="50" step="1" aria-label="Questions per round"><b id="roundVal"></b></div>
+      <div class="rangeticks"><span>5</span><span>50</span></div>
     </div>
     <div class="setrow">
       <label class="t" data-t="sReset"></label>
@@ -534,6 +540,7 @@ function renderStatic(){
   document.querySelectorAll('#segLang button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.lang));
   document.querySelectorAll('#segRoman button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.roman));
   document.querySelectorAll('#segRound button').forEach(b=>b.classList.toggle('on',+b.dataset.v===S.round));
+  $('#roundRange').value=S.round; $('#roundVal').textContent=S.round;
   $('#posHelpList').innerHTML = Object.entries(POS_INFO).map(([k,v])=>`<dt>${k}</dt><dd>${S.lang==='zh'?v[1]:v[0]} <span class="zh">（${v[2]}）</span></dd>`).join('');
 }
 function renderHome(){
@@ -603,6 +610,7 @@ $('#helpBtn').onclick=openHelp; $('#closeHelp').onclick=closeHelp; $('#helpOk').
 $('#help').addEventListener('click',e=>{ if(e.target.id==='help') closeHelp(); });
 $('#themeBtn').onclick=()=>{ S.theme = curTheme()==='dark'?'light':'dark'; saveS(); applyTheme(); };
 $('#segTheme').onclick=e=>{ const b=e.target.closest('[data-v]'); if(!b) return; S.theme=b.dataset.v; saveS(); applyTheme(); };
+$('#roundRange').oninput=e=>{ S.round=+e.target.value; saveS(); renderStatic(); };
 $('#segRound').onclick=e=>{ const v=e.target.dataset.v; if(!v) return; S.round=+v; saveS(); renderStatic(); };
 $('#resetBtn').onclick=()=>{ P={known:{},learning:{},mistakes:{}}; saveP(); $('#resetDone').textContent=t('resetDone'); renderHome(); };
 function refreshAll(){ renderStatic(); renderHome(); if(session) session.render(); }
