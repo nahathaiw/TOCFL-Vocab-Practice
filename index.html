@@ -381,7 +381,7 @@ const T = {
     hLevel:'1 · Level',hTopic:'2 · Topic',hPos:'3 · Part of speech',all:'Select all',allClear:'All',whatPos:'What do these mean?',allTopics:'All topics',allPos:'All parts of speech',
     match:'words match',skipKnown:'Skip words I know',
     mCards:'Flashcards',mCardsD:'Flip cards and mark what you know',mQuiz:'Quiz',mQuizD:'4-choice questions with a score',
-    mListen:'Listening',mListenD:'Hear the word, pick the character',mType:'Typing',mTypeD:'See the meaning, type the characters',askType:'Type this word in Chinese characters',typePh:'Type here…',check:'Check',hint:'Hint',giveUp:'Show answer',hintShown:'First character',typeTip:'Use your Chinese keyboard (Zhuyin or Pinyin input).',typedWas:'You typed',
+    mListen:'Listening',mListenD:'Hear the word, pick the character',mType:'Typing',mTypeD:'See the meaning, type the characters',askType:'Type this word in Chinese characters',typePh:'Type here…',check:'Check',hint:'Hint',giveUp:'Show answer',hintShown:'First character',typeTip:'Use your Chinese keyboard (Zhuyin or Pinyin input).',showPy:'Show pinyin',showZy:'Show Zhuyin',typedWas:'You typed',
     hProgress:'Your progress',mistakesLbl:'words in your mistakes list',reviewMistakes:'Quiz my mistakes',clear:'Clear',
     back:'Home',footer:'Word list: 華語文能力測驗詞表 (TOCFL 2.0, 2024-09-23). English meanings for all levels.',
     sLang:'Interface language',helpT:'How to use',gotIt:'Got it',sTheme:'Appearance',light:'Day',dark:'Dark',sRoman:'Romanization',sRound:'Questions per quiz round',sReset:'Progress',resetBtn:'Reset all progress',resetDone:'Progress cleared.',
@@ -401,7 +401,7 @@ const T = {
     hLevel:'1 · 等級',hTopic:'2 · 任務領域',hPos:'3 · 詞類',all:'全選',allClear:'全部',whatPos:'詞類說明',allTopics:'全部領域',allPos:'全部詞類',
     match:'個詞符合',skipKnown:'跳過已會的詞',
     mCards:'字卡',mCardsD:'翻卡片，標記會不會',mQuiz:'測驗',mQuizD:'四選一，計算分數',
-    mListen:'聽力',mListenD:'聽發音，選出詞彙',mType:'打字',mTypeD:'看意思，打出漢字',askType:'請打出這個詞的漢字',typePh:'在這裡輸入…',check:'檢查',hint:'提示',giveUp:'看答案',hintShown:'第一個字',typeTip:'請使用中文輸入法（注音或拼音）。',typedWas:'你輸入的是',
+    mListen:'聽力',mListenD:'聽發音，選出詞彙',mType:'打字',mTypeD:'看意思，打出漢字',askType:'請打出這個詞的漢字',typePh:'在這裡輸入…',check:'檢查',hint:'提示',giveUp:'看答案',hintShown:'第一個字',typeTip:'請使用中文輸入法（注音或拼音）。',showPy:'顯示拼音',showZy:'顯示注音',typedWas:'你輸入的是',
     hProgress:'學習進度',mistakesLbl:'個詞在錯題本',reviewMistakes:'練習錯題',clear:'清除',
     back:'首頁',footer:'詞表：華語文能力測驗詞表（TOCFL 2.0，2024-09-23）。所有等級皆有英文解釋。',
     sLang:'介面語言',helpT:'使用說明',gotIt:'知道了',sTheme:'外觀',light:'日間',dark:'夜間',sRoman:'拼音方式',sRound:'每回測驗題數',sReset:'進度',resetBtn:'重設所有進度',resetDone:'進度已清除。',
@@ -508,7 +508,7 @@ const HELP={en:`<ol>
 🂠 <b>Flashcards</b> – tap the card to flip it, then mark "Know it" or "Still learning".<br>
 ✓ <b>Quiz</b> – pick the right answer out of 4.<br>
 🔊 <b>Listening</b> – hear the word and pick the matching characters.<br>
-⌨ <b>Typing</b> – see the meaning and type the characters with your Chinese keyboard (Zhuyin or Pinyin). Use 💡 Hint if you're stuck.</li>
+⌨ <b>Typing</b> – see the English meaning and type the characters with your Chinese keyboard (Zhuyin or Pinyin). Stuck? Tap 🔤 Show pinyin or 💡 Hint.</li>
 <li><b>Review your mistakes.</b> Wrong answers are saved. Use "Quiz my mistakes" on the home screen until the list is empty.</li>
 <li><b>Track progress.</b> The bars show how many words you know in each level. Progress is saved in this browser.</li>
 </ol>
@@ -520,7 +520,7 @@ const HELP={en:`<ol>
 🂠 <b>字卡</b> – 點卡片翻面，再標記「我會了」或「還在學」。<br>
 ✓ <b>測驗</b> – 四選一。<br>
 🔊 <b>聽力</b> – 聽發音，選出正確的詞。<br>
-⌨ <b>打字</b> – 看意思，用中文輸入法（注音或拼音）打出漢字。不會時可按 💡 提示。</li>
+⌨ <b>打字</b> – 看英文意思，用中文輸入法（注音或拼音）打出漢字。不會時可按 🔤 顯示拼音或 💡 提示。</li>
 <li><b>複習錯題。</b>答錯的詞會存進錯題本，在首頁按「練習錯題」直到清空。</li>
 <li><b>查看進度。</b>進度條顯示每個等級已會的詞數，進度會存在這個瀏覽器。</li>
 </ol>
@@ -767,7 +767,7 @@ function answersFor(w){
 }
 const cleanIn = s => s.replace(/[\s,，.。!！?？'"、/]/g,'');
 function Typing(pool){
-  let order=shuffle(pool).slice(0,Math.min(S.round,pool.length)), qi=0, score=0, state=null, typed='', hint=false, wrongs=[];
+  let order=shuffle(pool).slice(0,Math.min(S.round,pool.length)), qi=0, score=0, state=null, typed='', hint=false, showPy=false, wrongs=[];
   const s={ render(){
     if(qi>=order.length) return s.result();
     const w=order[qi], ans=answersFor(w);
@@ -784,24 +784,25 @@ function Typing(pool){
     }
     $('#stage').innerHTML = `<div class="qbox">
       <div class="prompt"><div class="ask">${t('askType')}</div>
-        ${w.en?`<div class="q small">${esc(w.en)}</div><div class="roman zh" style="font-size:20px;color:var(--accent);margin-top:6px">${esc(roman(w))}</div>`
-              :`<div class="q small zh" style="color:var(--accent)">${esc(roman(w))}</div>`}
+        ${w.en?`<div class="q small">${esc(w.en)}</div>`:''}
+        ${(showPy||state||!w.en)?`<div class="roman zh" style="font-size:20px;color:var(--accent);margin-top:6px">${esc(roman(w))}</div>`:''}
         <div style="font-size:13px;color:var(--muted);margin-top:6px">${w.pos.join(', ')}${w.tp>=0?' · <span class="zh">'+esc(topicName(w.tp))+'</span>':''}</div>
-        <button class="speak" id="spk" title="Play">🔊</button></div>
+        ${(showPy||state)?'<button class="speak" id="spk" title="Play">🔊</button>':''}</div>
       <div class="typebox"><input class="typein ${state||''}" id="typein" lang="zh-Hant" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
           placeholder="${t('typePh')}" value="${esc(typed)}" ${state?'disabled':''}>
         ${state?'':`<button class="btn" id="checkB">${t('check')}</button>`}</div>
-      ${state?'':`<div class="typehelp"><button class="btn sm plain" id="hintB">💡 ${t('hint')}</button><button class="btn sm plain" id="giveB">${t('giveUp')}</button></div>
+      ${state?'':`<div class="typehelp">${showPy?'':`<button class="btn sm plain" id="pyB">🔤 ${S.roman==='zy'?t('showZy'):t('showPy')}</button>`}<button class="btn sm plain" id="hintB">💡 ${t('hint')}</button><button class="btn sm plain" id="giveB">${t('giveUp')}</button></div>
         <div class="hintline">${hint?`${t('hintShown')}: <b class="zh" style="font-size:20px;color:var(--text)">${esc(ans[0][0])}</b>${'＿'.repeat(Math.max(0,ans[0].length-1))}`:t('typeTip')}</div>`}
       ${fb}
       <div class="actions">${state?`<button class="btn" id="nextQ">${qi===order.length-1?t('finish'):t('nextQ')} →</button>`:''}</div></div>`;
-    $('#spk').onclick=()=>speak(w);
+    if($('#spk')) $('#spk').onclick=()=>speak(w);
     const inp=$('#typein');
     if(!state){
       inp.oninput=()=>{ typed=inp.value; };
       inp.onkeydown=e=>{ if(e.key==='Enter' && !e.isComposing && e.keyCode!==229){ e.preventDefault(); s.check(); } };
       $('#checkB').onclick=()=>s.check();
       $('#hintB').onclick=()=>{ typed=inp.value; hint=true; s.render(); };
+      if($('#pyB')) $('#pyB').onclick=()=>{ typed=inp.value; showPy=true; s.render(); };
       $('#giveB').onclick=()=>{ typed=inp.value; s.grade(false); };
       setTimeout(()=>inp.focus(),50);
     } else { $('#nextQ').onclick=()=>s.advance(); $('#nextQ').focus(); }
@@ -810,7 +811,7 @@ function Typing(pool){
   grade(ok){ const w=order[qi]; state=ok?'ok':'no'; typed=cleanIn(typed);
     if(ok){ score++; delete P.mistakes[w.id]; } else { wrongs.push(w); P.mistakes[w.id]=(P.mistakes[w.id]||0)+1; }
     saveP(); s.render(); speak(w); },
-  advance(){ qi++; state=null; typed=''; hint=false; s.render(); },
+  advance(){ qi++; state=null; typed=''; hint=false; showPy=false; s.render(); },
   result(){
     setBar(1,1); $('#studyMeta').textContent=t('mType');
     $('#stage').innerHTML = `<div class="result"><div class="note">${t('resultT')}</div>
