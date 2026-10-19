@@ -136,6 +136,11 @@ section.block{margin-top:24px}
 .seg button{border:0;background:var(--bg);padding:8px 16px;font-size:14px}
 .seg button.on{background:var(--accent);color:#fff}
 .hidden{display:none!important}
+.helppanel{max-width:520px;max-height:calc(100vh - 80px);overflow-y:auto}
+.helppanel ol{margin:0;padding-left:20px}
+.helppanel li{margin:0 0 12px;font-size:15px;line-height:1.55}
+.helppanel li b{color:var(--accent)}
+.helppanel .tip{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
 .typebox{display:flex;gap:10px;margin-top:14px}
 .typein{flex:1;min-width:0;font-size:28px;padding:12px 16px;border:2px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--text);font-family:"Noto Sans TC","PingFang TC",sans-serif;outline:none}
 .typein:focus{border-color:var(--accent)}
@@ -160,8 +165,14 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center}
   .wrap{padding:0 18px 56px}
   header{padding:18px 0 4px}
   .brand p,.setlbl{display:none}
-  .brand h1{font-size:19px}
-  .iconbtn{height:42px;min-width:42px;font-size:16px}
+  .brand h1{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand{gap:8px;min-width:0;flex:1}
+  .brand>div:last-child{min-width:0}
+  .hbtns .iconbtn{min-width:38px;height:38px;padding:0 8px}
+  .logo{width:32px;height:32px;font-size:16px;flex:none}
+  .hbtns{gap:6px;flex:none}
+  .hbtns .iconbtn{height:40px;min-width:40px;padding:0 10px;font-size:16px}
+  .overlay{padding:24px 12px}
   section.block{margin-top:30px}
   .block h2{font-size:12px;margin-bottom:12px}
   /* levels: tidy 2-column grid */
@@ -213,7 +224,7 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center}
       <div class="logo zh">華</div>
       <div><h1 data-t="title"></h1><p data-t="subtitle"></p></div>
     </div>
-    <div class="hbtns"><button class="iconbtn" id="themeBtn" aria-label="Toggle dark mode"></button>
+    <div class="hbtns"><button class="iconbtn" id="helpBtn" aria-label="How to use" style="font-weight:700">?</button><button class="iconbtn" id="themeBtn" aria-label="Toggle dark mode"></button>
     <button class="iconbtn" id="openSettings" aria-label="Settings">⚙ <span class="setlbl" data-t="settings"></span></button></div>
   </header>
 
@@ -274,6 +285,15 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center}
   </main>
 
   <footer data-t="footer"></footer>
+</div>
+
+<!-- HELP -->
+<div class="overlay" id="help">
+  <div class="panel helppanel">
+    <h3><span data-t="helpT"></span><button class="iconbtn" id="closeHelp">✕</button></h3>
+    <div id="helpBody"></div>
+    <div style="text-align:right;margin-top:14px"><button class="btn" id="helpOk" data-t="gotIt"></button></div>
+  </div>
 </div>
 
 <!-- SETTINGS -->
@@ -358,7 +378,7 @@ const T = {
     mListen:'Listening',mListenD:'Hear the word, pick the character',mType:'Typing',mTypeD:'See the meaning, type the characters',askType:'Type this word in Chinese characters',typePh:'Type here…',check:'Check',hint:'Hint',giveUp:'Show answer',hintShown:'First character',typeTip:'Use your Chinese keyboard (Zhuyin or Pinyin input).',typedWas:'You typed',
     hProgress:'Your progress',mistakesLbl:'words in your mistakes list',reviewMistakes:'Quiz my mistakes',clear:'Clear',
     back:'Home',footer:'Word list: 華語文能力測驗詞表 (TOCFL 2.0, 2024-09-23). English meanings for Pre-A1–A2.',
-    sLang:'Interface language',sTheme:'Appearance',light:'Day',dark:'Dark',sRoman:'Romanization',sRound:'Questions per quiz round',sReset:'Progress',resetBtn:'Reset all progress',resetDone:'Progress cleared.',
+    sLang:'Interface language',helpT:'How to use',gotIt:'Got it',sTheme:'Appearance',light:'Day',dark:'Dark',sRoman:'Romanization',sRound:'Questions per quiz round',sReset:'Progress',resetBtn:'Reset all progress',resetDone:'Progress cleared.',
     gNoun:'Nouns & measure words',gVerb:'Verbs',gOther:'Other',
     topicOff:'B1–C1 words have no topic in the official list. Topic filter applies to Pre-A1–A2 only.',
     topicMixed:'B1–C1 words have no topic, so choosing a topic only keeps Pre-A1–A2 words.',
@@ -378,7 +398,7 @@ const T = {
     mListen:'聽力',mListenD:'聽發音，選出詞彙',mType:'打字',mTypeD:'看意思，打出漢字',askType:'請打出這個詞的漢字',typePh:'在這裡輸入…',check:'檢查',hint:'提示',giveUp:'看答案',hintShown:'第一個字',typeTip:'請使用中文輸入法（注音或拼音）。',typedWas:'你輸入的是',
     hProgress:'學習進度',mistakesLbl:'個詞在錯題本',reviewMistakes:'練習錯題',clear:'清除',
     back:'首頁',footer:'詞表：華語文能力測驗詞表（TOCFL 2.0，2024-09-23）。英文解釋涵蓋準備級至基礎級。',
-    sLang:'介面語言',sTheme:'外觀',light:'日間',dark:'夜間',sRoman:'拼音方式',sRound:'每回測驗題數',sReset:'進度',resetBtn:'重設所有進度',resetDone:'進度已清除。',
+    sLang:'介面語言',helpT:'使用說明',gotIt:'知道了',sTheme:'外觀',light:'日間',dark:'夜間',sRoman:'拼音方式',sRound:'每回測驗題數',sReset:'進度',resetBtn:'重設所有進度',resetDone:'進度已清除。',
     gNoun:'名詞與量詞',gVerb:'動詞',gOther:'其他',
     topicOff:'進階級以上的詞在官方詞表中沒有任務領域，此篩選只適用於準備級至基礎級。',
     topicMixed:'進階級以上的詞沒有任務領域，選擇領域時只會保留準備級至基礎級的詞。',
@@ -474,6 +494,33 @@ function filtered(opts={}){
 }
 
 /* ---------- render home ---------- */
+const HELP={en:`<ol>
+<li><b>Pick your level.</b> Tap one or more levels, from Pre-A1 (easiest) to C1. The numbers show how many words each level has.</li>
+<li><b>Narrow it down (optional).</b> Choose a Topic (e.g. Food &amp; drink) and/or a Part of speech (e.g. Vs). Tap "What do these mean?" to learn what each tag means. Topics only exist for Pre-A1 to A2.</li>
+<li><b>Check the counter.</b> It shows how many words match. Tick "Skip words I know" to hide words you already marked as known.</li>
+<li><b>Choose a mode:</b><br>
+🂠 <b>Flashcards</b> – tap the card to flip it, then mark "Know it" or "Still learning".<br>
+✓ <b>Quiz</b> – pick the right answer out of 4.<br>
+🔊 <b>Listening</b> – hear the word and pick the matching characters.<br>
+⌨ <b>Typing</b> – see the meaning and type the characters with your Chinese keyboard (Zhuyin or Pinyin). Use 💡 Hint if you're stuck.</li>
+<li><b>Review your mistakes.</b> Wrong answers are saved. Use "Quiz my mistakes" on the home screen until the list is empty.</li>
+<li><b>Track progress.</b> The bars show how many words you know in each level. Progress is saved in this browser.</li>
+</ol>
+<p class="tip">⚙ Settings: switch English / 中文, Pinyin / Zhuyin, quiz length, and reset progress. ☀️/🌙 switches day and dark mode. On a computer: Space flips a card, 1–4 picks an answer, Enter goes to the next question.</p>`,zh:`<ol>
+<li><b>選擇等級。</b>點選一個或多個等級，從準備級（最簡單）到流利級。數字代表該等級的詞彙數量。</li>
+<li><b>縮小範圍（可選）。</b>選擇任務領域（例如飲食）或詞類（例如 Vs）。點「詞類說明」看每個詞類的意思。只有準備級到基礎級有任務領域。</li>
+<li><b>看符合的詞數。</b>勾選「跳過已會的詞」可隱藏已標記會的詞。</li>
+<li><b>選擇練習模式：</b><br>
+🂠 <b>字卡</b> – 點卡片翻面，再標記「我會了」或「還在學」。<br>
+✓ <b>測驗</b> – 四選一。<br>
+🔊 <b>聽力</b> – 聽發音，選出正確的詞。<br>
+⌨ <b>打字</b> – 看意思，用中文輸入法（注音或拼音）打出漢字。不會時可按 💡 提示。</li>
+<li><b>複習錯題。</b>答錯的詞會存進錯題本，在首頁按「練習錯題」直到清空。</li>
+<li><b>查看進度。</b>進度條顯示每個等級已會的詞數，進度會存在這個瀏覽器。</li>
+</ol>
+<p class="tip">⚙ 設定：切換 English／中文、拼音／注音、每回題數，或重設進度。☀️/🌙 切換日間與夜間模式。電腦鍵盤：空白鍵翻卡，1–4 選答案，Enter 下一題。</p>`};
+function openHelp(){ $('#helpBody').innerHTML=HELP[S.lang]; $('#help').classList.add('show'); }
+function closeHelp(){ $('#help').classList.remove('show'); S.seenHelp=true; saveS(); }
 function curTheme(){ return S.theme || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
 function applyTheme(){ const th=curTheme(); document.documentElement.dataset.theme=th;
   $('#themeBtn').textContent = th==='dark' ? '☀️' : '🌙';
@@ -552,6 +599,8 @@ $('#closeSettings').onclick=()=>$('#settings').classList.remove('show');
 $('#settings').addEventListener('click',e=>{ if(e.target.id==='settings') $('#settings').classList.remove('show'); });
 $('#segLang').onclick=e=>{ const v=e.target.dataset.v; if(!v) return; S.lang=v; saveS(); refreshAll(); };
 $('#segRoman').onclick=e=>{ const v=e.target.dataset.v; if(!v) return; S.roman=v; saveS(); refreshAll(); };
+$('#helpBtn').onclick=openHelp; $('#closeHelp').onclick=closeHelp; $('#helpOk').onclick=closeHelp;
+$('#help').addEventListener('click',e=>{ if(e.target.id==='help') closeHelp(); });
 $('#themeBtn').onclick=()=>{ S.theme = curTheme()==='dark'?'light':'dark'; saveS(); applyTheme(); };
 $('#segTheme').onclick=e=>{ const b=e.target.closest('[data-v]'); if(!b) return; S.theme=b.dataset.v; saveS(); applyTheme(); };
 $('#segRound').onclick=e=>{ const v=e.target.dataset.v; if(!v) return; S.round=+v; saveS(); renderStatic(); };
@@ -768,11 +817,12 @@ function Typing(pool){
   };
   return s;
 }
-document.addEventListener('keydown',e=>{ if(session && !$('#study').classList.contains('hidden') && !$('#settings').classList.contains('show')) session.key(e); if(e.key==='Escape') $('#settings').classList.remove('show'); });
+document.addEventListener('keydown',e=>{ if(session && !$('#study').classList.contains('hidden') && !$('#settings').classList.contains('show') && !$('#help').classList.contains('show')) session.key(e); if(e.key==='Escape'){ $('#settings').classList.remove('show'); if($('#help').classList.contains('show')) closeHelp(); } });
 
 /* ---------- init ---------- */
 S.levels = S.levels.filter(id=>LEVELS.some(l=>l.id===id)); if(!S.levels.length) S.levels=['N1'];
 renderStatic(); renderHome();
+if(!S.seenHelp) openHelp();
 </script>
 </body>
 </html>
